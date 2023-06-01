@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,7 +20,7 @@ Route::get('/', function () {
 });
 
 Route::group(['prefix' => 'api'], function () {
-    Route::post('/login/check', [UserController::class, 'login'])->name('login');
+    Route::post('/login/check', [AuthController::class, 'login'])->name('login');
 
     Route::group(['prefix' => '/create/'], function () {
         Route::post('/trainee', [UserController::class, 'createTrainee']);
