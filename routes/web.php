@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,4 +16,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::group(['prefix' => 'api'], function () {
+    Route::post('/login/check', [UserController::class, 'login'])->name('login');
+
+    Route::group(['prefix' => '/create/'], function () {
+        Route::post('/trainee', [UserController::class, 'createTrainee']);
+        Route::post('/supervisor', [UserController::class, 'createSupervisor']);
+        Route::post('/evaluator', [UserController::class, 'createEvaluator']);
+    });
 });
