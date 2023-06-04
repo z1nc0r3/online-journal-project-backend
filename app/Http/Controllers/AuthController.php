@@ -31,13 +31,4 @@ class AuthController extends Controller
             return response()->json(['login_error' => 'Invalid email or password']);
         }
     }
-
-    // public function logout(Request $request)
-    // {
-    //     // Revoke the user's current API token
-    //     $request->user()->currentAccessToken()->delete();
-
-    //     // Return a success message
-    //     return response()->json(['message' => 'User logged out successfully']);
-    // }
 }
