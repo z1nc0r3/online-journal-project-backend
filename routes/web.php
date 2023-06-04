@@ -41,6 +41,7 @@ Route::group(['prefix' => 'api'], function () {
     });
 
     Route::group(['prefix' => '/get/'], function () {
+        Route::get('/trainee/list', [UserController::class, 'getTraineeList']);
         Route::get('/trainee/{id}', [UserController::class, 'getUserDetails']);
         Route::get('/supervisor/{id}', [UserController::class, 'getSupervisorDetails']);
         Route::get('/evaluator/{id}', [UserController::class, 'getEvaluatorDetails']);

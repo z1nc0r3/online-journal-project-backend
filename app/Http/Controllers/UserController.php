@@ -83,6 +83,18 @@ class UserController extends Controller
 
     /* Handle getting user details */
 
+    // Get trainee list
+
+    public function getTraineeList()
+    {
+        $trainees = User::with(['connection'])
+            ->select('id', 'fName', 'department')
+            ->where('role', 'trainee')
+            ->get();
+
+        return response()->json(['trainees' => $trainees]);
+    }
+
     // Get the Trainee details
     public function getUserDetails($traineeId)
     {
@@ -119,10 +131,6 @@ class UserController extends Controller
             'supervisor_name' => $supervisor_name,
             'evaluator_id' => $evaluator_id,
             'evaluator_name' => $evaluator_name,
-            // 'supervisor_id' => $user->connection->supervisor ? $user->connection->supervisor->id : null,
-            // 'supervisor_name' => $user->connection->supervisor ? $user->connection->supervisor->fName : null,
-            // 'evaluator_id' => $user->connection->evaluator ? $user->connection->evaluator->id : null,
-            // 'evaluator_name' => $user->connection->evaluator ? $user->connection->evaluator->fName : null,
         ];
 
         return response()->json(['user' => $response]);
