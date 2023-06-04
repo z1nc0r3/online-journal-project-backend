@@ -41,8 +41,8 @@ Route::group(['prefix' => 'api'], function () {
     });
 
     Route::group(['prefix' => '/get/'], function () {
-        Route::get('/trainee/{id}', [UserController::class, 'getTrainee']);
-        Route::get('/supervisor/{id}', [UserController::class, 'getSupervisor']);
-        Route::get('/evaluator/{id}', [UserController::class, 'getEvaluator']);
+        Route::get('/trainee/{id}', [UserController::class, 'getUserDetails']);
+        Route::get('/supervisor/{id}', [UserController::class, 'getSupervisorDetails']);
+        Route::get('/evaluator/{id}', [UserController::class, 'getEvaluatorDetails']);
     });
 });
