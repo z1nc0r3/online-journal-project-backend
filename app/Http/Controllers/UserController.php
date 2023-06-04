@@ -39,7 +39,8 @@ class UserController extends Controller
     }
 
     // Create a new supervisor user
-    public function createSupervisor(Request $request) {
+    public function createSupervisor(Request $request)
+    {
         $request->validate([
             'fName' => 'required',
             'email' => 'required|email|unique:users',
@@ -60,7 +61,8 @@ class UserController extends Controller
     }
 
     // Create a new evaluator user
-    public function createEvaluator(Request $request) {
+    public function createEvaluator(Request $request)
+    {
         $request->validate([
             'fName' => 'required',
             'email' => 'required|email|unique:users',
@@ -70,6 +72,7 @@ class UserController extends Controller
         User::create([
             'role' => 'evaluator',
             'fName' => $request->fName,
+            'department' => $request->department,
             'email' => $request->email,
             'phone' => $request->phone,
             'password' => $request->password,
@@ -92,17 +95,36 @@ class UserController extends Controller
             return response()->json(['message' => 'User not found'], 404);
         }
 
+        try {
+            $supervisor_id = $user->connection->supervisor->id;
+            $supervisor_name = $user->connection->supervisor->fName;
+        } catch (\Throwable $th) {
+            $supervisor_id = null;
+            $supervisor_name = null;
+        }
+
+        try {
+            $evaluator_id = $user->connection->evaluator->id;
+            $evaluator_name = $user->connection->evaluator->fName;
+        } catch (\Throwable $th) {
+            $evaluator_id = null;
+            $evaluator_name = null;
+        }
+
         $response = [
             'trainee_id' => $user->id,
             'fName' => $user->fName,
             'department' => $user->department,
-            'supervisor_id' => $user->connection->supervisor->id,
-            'supervisor_name' => $user->connection->supervisor->fName,
-            'evaluator_id' => $user->connection->evaluator->id,
-            'evaluator_name' => $user->connection->evaluator->fName,
+            'supervisor_id' => $supervisor_id,
+            'supervisor_name' => $supervisor_name,
+            'evaluator_id' => $evaluator_id,
+            'evaluator_name' => $evaluator_name,
+            // 'supervisor_id' => $user->connection->supervisor ? $user->connection->supervisor->id : null,
+            // 'supervisor_name' => $user->connection->supervisor ? $user->connection->supervisor->fName : null,
+            // 'evaluator_id' => $user->connection->evaluator ? $user->connection->evaluator->id : null,
+            // 'evaluator_name' => $user->connection->evaluator ? $user->connection->evaluator->fName : null,
         ];
 
         return response()->json(['user' => $response]);
     }
-
 }
