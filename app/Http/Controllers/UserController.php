@@ -4,19 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\Connection;
 
 class UserController extends Controller
 {
+
+    /* Handle creating new users */
+
+    // Create a new trainee user
     public function createTrainee(Request $request)
     {
-        // Validate the request data
         $request->validate([
             'fName' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required',
         ]);
 
-        // Create a new trainee user
         User::create([
             'role' => 'trainee',
             'fName' => $request->fName,
@@ -32,21 +35,17 @@ class UserController extends Controller
             'password' => $request->password,
         ]);
 
-        // Return a success message or any other response as needed
         return response()->json(['message' => 'Trainee user created successfully']);
     }
 
-    // Define similar methods for supervisor and evaluator user types
-
+    // Create a new supervisor user
     public function createSupervisor(Request $request) {
-        // Validate the request data
         $request->validate([
             'fName' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required',
         ]);
 
-        // Create a new supervisor user
         User::create([
             'role' => 'supervisor',
             'fName' => $request->fName,
@@ -57,19 +56,17 @@ class UserController extends Controller
             'password' => $request->password,
         ]);
 
-        // Return a success message or any other response as needed
         return response()->json(['message' => 'Supervisor user created successfully']);
     }
 
+    // Create a new evaluator user
     public function createEvaluator(Request $request) {
-        // Validate the request data
         $request->validate([
             'fName' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required',
         ]);
 
-        // Create a new evaluator user
         User::create([
             'role' => 'evaluator',
             'fName' => $request->fName,
@@ -78,8 +75,34 @@ class UserController extends Controller
             'password' => $request->password,
         ]);
 
-        // Return a success message or any other response as needed
         return response()->json(['message' => 'Evaluator user created successfully']);
+    }
+
+    /* Handle getting user details */
+
+    // Get the Trainee details
+    public function getUserDetails($traineeId)
+    {
+        $user = User::with(['connection.supervisor', 'connection.evaluator'])
+            ->select('id', 'fName', 'department')
+            ->where('id', $traineeId)
+            ->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $response = [
+            'trainee_id' => $user->id,
+            'fName' => $user->fName,
+            'department' => $user->department,
+            'supervisor_id' => $user->connection->supervisor->id,
+            'supervisor_name' => $user->connection->supervisor->fName,
+            'evaluator_id' => $user->connection->evaluator->id,
+            'evaluator_name' => $user->connection->evaluator->fName,
+        ];
+
+        return response()->json(['user' => $response]);
     }
 
 }
