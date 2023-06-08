@@ -57,8 +57,18 @@ class User extends Authenticatable
         $this->attributes['password'] = Hash::make($value);
     }
 
-    public function connection()
+    public function traineeConnection()
     {
         return $this->hasOne(Connection::class, 'trainee_id');
+    }
+
+    public function supervisorConnection()
+    {
+        return $this->hasOne(Connection::class, 'supervisor_id');
+    }
+
+    public function evaluatorConnection()
+    {
+        return $this->hasOne(Connection::class, 'evaluator_id');
     }
 }

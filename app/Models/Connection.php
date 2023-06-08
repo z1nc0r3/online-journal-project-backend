@@ -11,6 +11,7 @@ class Connection extends Model
 
     protected $fillable = [
         'trainee_id',
+        'trainee_name',
         'supervisor_id',
         'supervisor_name',
         'evaluator_id',
