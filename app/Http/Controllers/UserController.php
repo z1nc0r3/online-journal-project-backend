@@ -84,15 +84,36 @@ class UserController extends Controller
     /* Handle getting user details */
 
     // Get trainee list
-
     public function getTraineeList()
     {
-        $trainees = User::with(['connection'])
+        $trainees = User::with(['traineeConnection'])
             ->select('id', 'fName', 'department')
             ->where('role', 'trainee')
             ->get();
 
         return response()->json(['trainees' => $trainees]);
+    }
+
+    // Get supervisor list
+    public function getSupervisorList()
+    {
+        $supervisors = User::with(['supervisorConnection'])
+            ->select('id', 'fName')
+            ->where('role', 'supervisor')
+            ->get();
+
+        return response()->json(['supervisors' => $supervisors]);
+    }
+
+    // Get evaluator list
+    public function getEvaluatorList()
+    {
+        $evaluators = User::with(['evaluatorConnection'])
+            ->select('id', 'fName')
+            ->where('role', 'evaluator')
+            ->get();
+
+        return response()->json(['evaluators' => $evaluators]);
     }
 
     // Get the Trainee details
