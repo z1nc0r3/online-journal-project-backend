@@ -122,6 +122,7 @@ class UserController extends Controller
         $user = User::with(['supervisorConnection.supervisor', 'evaluatorConnection.evaluator'])
             ->select()
             ->where('id', $traineeId)
+            ->where('role', 'trainee')
             ->first();
 
         if (!$user) {
@@ -170,6 +171,7 @@ class UserController extends Controller
     {
         $user = User::select()
             ->where('id', $supervisorId)
+            ->where('role', 'supervisor')
             ->first();
 
         if (!$user) {
@@ -183,6 +185,30 @@ class UserController extends Controller
             'phone' => $user->phone,
             'estName' => $user->estName,
             'estAddress' => $user->estAddress,
+            'trainees' => $user->traineeConnection,
+        ];
+
+        return response()->json(['user' => $response]);
+    }
+
+    // Get the Evaluator details
+    public function getEvaluatorDetails($evaluatorId)
+    {
+        $user = User::select()
+            ->where('id', $evaluatorId)
+            ->where('role', 'evaluator')
+            ->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $response = [
+            'evaluator_id' => $user->id,
+            'fName' => $user->fName,
+            'department' => $user->department,
+            'email' => $user->email,
+            'phone' => $user->phone,
             'trainees' => $user->traineeConnection,
         ];
 
