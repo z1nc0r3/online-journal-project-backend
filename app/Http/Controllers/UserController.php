@@ -117,10 +117,10 @@ class UserController extends Controller
     }
 
     // Get the Trainee details
-    public function getUserDetails($traineeId)
+    public function getTraineeDetails($traineeId)
     {
-        $user = User::with(['connection.supervisor', 'connection.evaluator'])
-            ->select('id', 'fName', 'department')
+        $user = User::with(['supervisorConnection.supervisor', 'evaluatorConnection.evaluator'])
+            ->select()
             ->where('id', $traineeId)
             ->first();
 
@@ -129,16 +129,16 @@ class UserController extends Controller
         }
 
         try {
-            $supervisor_id = $user->connection->supervisor->id;
-            $supervisor_name = $user->connection->supervisor->fName;
+            $supervisor_id = $user->supervisorConnection->supervisor->id;
+            $supervisor_name = $user->supervisorConnection->supervisor->fName;
         } catch (\Throwable $th) {
             $supervisor_id = null;
             $supervisor_name = null;
         }
 
         try {
-            $evaluator_id = $user->connection->evaluator->id;
-            $evaluator_name = $user->connection->evaluator->fName;
+            $evaluator_id = $user->evaluatorConnection->evaluator->id;
+            $evaluator_name = $user->evaluatorConnection->evaluator->fName;
         } catch (\Throwable $th) {
             $evaluator_id = null;
             $evaluator_name = null;
@@ -147,11 +147,43 @@ class UserController extends Controller
         $response = [
             'trainee_id' => $user->id,
             'fName' => $user->fName,
+            'regNo' => $user->regno,
             'department' => $user->department,
+            'address' => $user->address,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'estName' => $user->estName,
+            'estAddress' => $user->estAddress,
+            'startDate' => $user->startDate,
+            'duration' => $user->duration,
             'supervisor_id' => $supervisor_id,
             'supervisor_name' => $supervisor_name,
             'evaluator_id' => $evaluator_id,
             'evaluator_name' => $evaluator_name,
+        ];
+
+        return response()->json(['user' => $response]);
+    }
+
+    // Get the Supervisor details
+    public function getSupervisorDetails($supervisorId)
+    {
+        $user = User::select()
+            ->where('id', $supervisorId)
+            ->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $response = [
+            'supervisor_id' => $user->id,
+            'fName' => $user->fName,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'estName' => $user->estName,
+            'estAddress' => $user->estAddress,
+            'trainees' => $user->traineeConnection,
         ];
 
         return response()->json(['user' => $response]);
