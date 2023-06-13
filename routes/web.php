@@ -29,8 +29,8 @@ Route::group(['prefix' => 'api'], function () {
     });
 
     Route::group(['prefix' => '/update/'], function () {
-        Route::post('/trainee', [UserController::class, 'updateTrainee']);
-        Route::post('/supervisor', [UserController::class, 'updateSupervisor']);
+        Route::post('/trainee/{id}', [UserController::class, 'updateTrainee']);
+        Route::post('/supervisor/{id}', [UserController::class, 'updateSupervisor']);
         Route::post('/evaluator', [UserController::class, 'updateEvaluator']);
     });
 

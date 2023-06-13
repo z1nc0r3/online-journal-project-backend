@@ -214,4 +214,77 @@ class UserController extends Controller
 
         return response()->json(['user' => $response]);
     }
+
+
+    /* Handle updating user details */
+
+    // Update trainee details
+    public function updateTrainee(Request $request, $traineeId)
+    {
+        $user = User::where('id', $traineeId)
+            ->where('role', 'trainee')
+            ->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $request->validate([
+            'fName' => 'required',
+            'regNo' => 'required',
+            'department' => 'required',
+            'address' => 'required',
+            'email' => 'required|email',
+            'phone' => 'required',
+            'estName' => 'required',
+            'estAddress' => 'required',
+            'startDate' => 'required',
+            'duration' => 'required',
+        ]);
+
+        $user->update([
+            'fName' => $request->fName,
+            'regNo' => $request->regNo,
+            'department' => $request->department,
+            'address' => $request->address,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'estName' => $request->estName,
+            'estAddress' => $request->estAddress,
+            'startDate' => $request->startDate,
+            'duration' => $request->duration,
+        ]);
+
+        return response()->json(['message' => 'Trainee user updated successfully']);
+    }
+
+    // Update supervisor details
+    public function updateSupervisor(Request $request, $supervisorId)
+    {
+        $user = User::where('id', $supervisorId)
+            ->where('role', 'supervisor')
+            ->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $request->validate([
+            'fName' => 'required',
+            'email' => 'required|email',
+            'phone' => 'required',
+            'estName' => 'required',
+            'estAddress' => 'required',
+        ]);
+
+        $user->update([
+            'fName' => $request->fName,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'estName' => $request->estName,
+            'estAddress' => $request->estAddress,
+        ]);
+
+        return response()->json(['message' => 'Supervisor user updated successfully']);
+    }
 }
