@@ -31,7 +31,7 @@ Route::group(['prefix' => 'api'], function () {
     Route::group(['prefix' => '/update/'], function () {
         Route::post('/trainee/{id}', [UserController::class, 'updateTrainee']);
         Route::post('/supervisor/{id}', [UserController::class, 'updateSupervisor']);
-        Route::post('/evaluator', [UserController::class, 'updateEvaluator']);
+        Route::post('/evaluator/{id}', [UserController::class, 'updateEvaluator']);
     });
 
     Route::group(['prefix' => '/delete/'], function () {

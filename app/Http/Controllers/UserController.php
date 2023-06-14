@@ -98,7 +98,7 @@ class UserController extends Controller
     public function getSupervisorList()
     {
         $supervisors = User::with(['supervisorConnection'])
-            ->select('id', 'fName')
+            ->select('id', 'fName', 'estName')
             ->where('role', 'supervisor')
             ->get();
 
