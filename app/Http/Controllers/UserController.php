@@ -109,7 +109,7 @@ class UserController extends Controller
     public function getEvaluatorList()
     {
         $evaluators = User::with(['evaluatorConnection'])
-            ->select('id', 'fName')
+            ->select('id', 'fName', 'department')
             ->where('role', 'evaluator')
             ->get();
 
@@ -286,5 +286,82 @@ class UserController extends Controller
         ]);
 
         return response()->json(['message' => 'Supervisor user updated successfully']);
+    }
+
+    // Update evaluator details
+    public function updateEvaluator(Request $request, $evaluatorId)
+    {
+        $user = User::where('id', $evaluatorId)
+            ->where('role', 'evaluator')
+            ->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $request->validate([
+            'fName' => 'required',
+            'department' => 'required',
+            'email' => 'required|email',
+            'phone' => 'required',
+        ]);
+
+        $user->update([
+            'fName' => $request->fName,
+            'department' => $request->department,
+            'email' => $request->email,
+            'phone' => $request->phone,
+        ]);
+
+        return response()->json(['message' => 'Evaluator user updated successfully']);
+    }
+
+    // Assign a supervisor and evaluator to a trainee
+    public function assignSupervisorAndEvaluator(Request $request)
+    {
+
+        error_log($request->input('trainee_connection.supervisor_id'));
+
+        $traineeId = $request->id;
+        $traineeName = $request->fName;
+        $supervisorId = $request->input('trainee_connection.supervisor_id');
+        $supervisorName = $request->input('trainee_connection.supervisor_name');
+        $evaluatorId = $request->input('trainee_connection.evaluator_id');
+        $evaluatorName = $request->input('trainee_connection.evaluator_name');
+
+        // delete the connection if both supervisor and evaluator are not assigned
+        if (!$supervisorId && !$evaluatorId) {
+            error_log('Deleting connection');
+            Connection::where('trainee_id', $traineeId)
+                ->delete();
+            return response()->json(['message' => 'Connection deleted successfully']);
+        } else if (!$supervisorId || !$evaluatorId) {
+            return response()->json(['message' => 'Please assign both Supervisor and Evaluator'], 400);
+        }
+
+        $user = Connection::where('trainee_id', $traineeId)
+            ->first();
+
+        if (!$user) {
+            error_log('User not found. Creating new connection');
+            Connection::create([
+                'trainee_id' => $traineeId,
+                'trainee_name' => $traineeName,
+                'supervisor_id' => $supervisorId,
+                'supervisor_name' => $supervisorName,
+                'evaluator_id' => $evaluatorId,
+                'evaluator_name' => $evaluatorName,
+            ]);
+        } else {
+            error_log('User found. Updating connection');
+            $user->update([
+                'supervisor_id' => $supervisorId,
+                'supervisor_name' => $supervisorName,
+                'evaluator_id' => $evaluatorId,
+                'evaluator_name' => $evaluatorName,
+            ]);
+        }
+
+        return response()->json(['message' => 'Supervisor and Evaluator assigned successfully']);
     }
 }
