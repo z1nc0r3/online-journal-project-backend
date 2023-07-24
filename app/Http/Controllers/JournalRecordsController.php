@@ -11,7 +11,7 @@ class JournalRecordsController extends Controller
 {
     public function getRecords()
     {
-        $records = journal_records::select('id', 'discription', 'week')
+        $records = journal_records::select('id', 'description', 'week')
                         ->get();
 
         return response()->json(['records' => $records]);
@@ -21,8 +21,9 @@ class JournalRecordsController extends Controller
     {
 
         journal_records::create([
-            'discription' => $request->discription,
-            'prob_and_sol' => $request->prob_and_sol,
+            'trainee_id' => $request->user_id,
+            'description' => $request->description,
+            'solutions' => $request->solutions,
             'week' => $request->week,
             'month' => $request->month,
             'year' => $request->year,

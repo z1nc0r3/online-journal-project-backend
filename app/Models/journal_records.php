@@ -10,10 +10,17 @@ class journal_records extends Model
     use HasFactory;
 
     protected $fillable = [
-        'discription',
-        'prob_and_sol',
+        'trainee_id',
+        'description',
+        'solutions',
         'week',
         'month',
         'year',
     ];
+
+    public function trainee()
+    {
+        return $this->belongsTo(User::class, 'trainee_id');
+    }
+
 }

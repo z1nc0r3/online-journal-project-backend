@@ -13,12 +13,16 @@ return new class extends Migration
     {
         Schema::create('journal_records', function (Blueprint $table) {
             $table->id();
-            $table->string('discription');
-            $table->string('prob_and_sol');
+            $table->unsignedBigInteger('trainee_id');
+            $table->string('description');
+            $table->string('solutions');
             $table->string('week');
             $table->string('month');
             $table->string('year');
             $table->timestamps();
+
+
+            $table->foreign('trainee_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
