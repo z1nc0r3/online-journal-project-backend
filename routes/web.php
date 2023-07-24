@@ -27,6 +27,7 @@ Route::group(['prefix' => 'api'], function () {
         Route::post('/trainee', [UserController::class, 'createTrainee']);
         Route::post('/supervisor', [UserController::class, 'createSupervisor']);
         Route::post('/evaluator', [UserController::class, 'createEvaluator']);
+        Route::post('/bulk', [UserController::class, 'createBulkUsers']);
     });
 
     // Update an existing user

@@ -20,10 +20,12 @@ class AuthController extends Controller
         // Attempt to authenticate the user
         if (Auth::attempt($credentials)) {
             $role = Auth::user()->role;
+            $user_id = Auth::user()->id;
             $fname = Auth::user()->fName;
 
             return response()->json([
                 'role' => $role,
+                'user_id' => $user_id,
                 'fName' => $fname,
             ]);
         } else {

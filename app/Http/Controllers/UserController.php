@@ -20,20 +20,24 @@ class UserController extends Controller
             'password' => 'required',
         ]);
 
-        User::create([
-            'role' => 'trainee',
-            'fName' => $request->fName,
-            'regNo' => $request->regNo,
-            'department' => $request->department,
-            'address' => $request->address,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'estName' => $request->estName,
-            'estAddress' => $request->estAddress,
-            'startDate' => $request->startDate,
-            'duration' => $request->duration,
-            'password' => $request->password,
-        ]);
+        try {
+            User::create([
+                'role' => 'trainee',
+                'fName' => $request->fName,
+                'regNo' => $request->regNo,
+                'department' => $request->department,
+                'address' => $request->address,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'estName' => $request->estName,
+                'estAddress' => $request->estAddress,
+                'startDate' => $request->startDate,
+                'duration' => $request->duration,
+                'password' => $request->password,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error creating user']);
+        }
 
         return response()->json(['message' => 'Trainee user created successfully']);
     }
@@ -91,6 +95,10 @@ class UserController extends Controller
             ->where('role', 'trainee')
             ->get();
 
+        if (!$trainees) {
+            return response()->json(['error' => 'No trainees found'], 404);
+        }
+
         return response()->json(['trainees' => $trainees]);
     }
 
@@ -101,6 +109,10 @@ class UserController extends Controller
             ->select('id', 'fName', 'estName')
             ->where('role', 'supervisor')
             ->get();
+        
+        if (!$supervisors) {
+            return response()->json(['error' => 'No supervisors found'], 404);
+        }
 
         return response()->json(['supervisors' => $supervisors]);
     }
@@ -112,6 +124,10 @@ class UserController extends Controller
             ->select('id', 'fName', 'department')
             ->where('role', 'evaluator')
             ->get();
+
+        if (!$evaluators) {
+            return response()->json(['error' => 'No evaluators found'], 404);
+        }
 
         return response()->json(['evaluators' => $evaluators]);
     }
@@ -363,5 +379,55 @@ class UserController extends Controller
         }
 
         return response()->json(['message' => 'Supervisor and Evaluator assigned successfully']);
+    }
+
+    // Create bulk users using json input
+    public function createBulkUsers(Request $request)
+    {
+        $users = $request->users;
+
+        foreach ($users as $user) {
+            if ($user['role'] == 'trainee') {
+                User::create([
+                    'role' => $user['role'],
+                    'fName' => $user['fName'],
+                    'regNo' => $user['regNo'],
+                    'department' => $user['department'],
+                    'address' => $user['address'],
+                    'email' => $user['email'],
+                    'phone' => $user['phone'],
+                    'estName' => $user['estName'],
+                    'estAddress' => $user['estAddress'],
+                    'startDate' => $user['startDate'],
+                    'duration' => $user['duration'],
+                    'password' => $user['password'],
+                ]);
+            } else if ($user['role'] == 'supervisor') {
+                User::create([
+                    'role' => $user['role'],
+                    'fName' => $user['fName'],
+                    'email' => $user['email'],
+                    'phone' => $user['phone'],
+                    'estName' => $user['estName'],
+                    'estAddress' => $user['estAddress'],
+                    'password' => $user['password'],
+                ]);
+            } else if ($user['role'] == 'evaluator') {
+                User::create([
+                    'role' => $user['role'],
+                    'fName' => $user['fName'],
+                    'department' => $user['department'],
+                    'email' => $user['email'],
+                    'phone' => $user['phone'],
+                    'password' => $user['password'],
+                ]);
+            }
+        }
+
+        if (!$users) {
+            return response()->json(['message' => 'Error creating users']);
+        }
+
+        return response()->json(['message' => 'Users created successfully']);
     }
 }
