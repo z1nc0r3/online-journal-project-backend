@@ -64,7 +64,9 @@ Route::group(['prefix' => 'api'], function () {
     });
 
     Route::group(['prefix' => '/record/'], function () {
-        Route::get('/week', [JournalRecordsController::class, 'getRecords']);
+        Route::get('/currentMonth/week/{trainee_id}', [JournalRecordsController::class, 'getCurrentMonthRecords']);
+        Route::get('/week/{trainee_id}', [JournalRecordsController::class, 'getAllRecords']);
+
     });
 
     Route::group(['prefix' => '/addRecord/'], function () {
