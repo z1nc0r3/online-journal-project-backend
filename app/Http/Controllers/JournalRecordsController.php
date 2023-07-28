@@ -9,9 +9,24 @@ use Illuminate\Http\Request;
 
 class JournalRecordsController extends Controller
 {
-    public function getRecords()
+    public function getAllRecords($trainee_id)
     {
-        $records = journal_records::select('id', 'description', 'week')
+        $records = journal_records::select('id', 'description', 'solutions', 'week', 'month', 'year')
+                        ->where('trainee_id', $trainee_id)
+                        ->get();
+
+        return response()->json(['records' => $records]);
+    }
+
+    public function getCurrentMonthRecords(Request $request, $trainee_id)
+    {
+        $month = $request->query('month');
+        $year = $request->query('year');
+
+        $records = journal_records::select('id', 'description', 'solutions', 'week')
+                        ->where('trainee_id', $trainee_id)
+                        ->where('month', $month) // Assuming you want to filter by creation date
+                        ->where('year', $year)
                         ->get();
 
         return response()->json(['records' => $records]);
