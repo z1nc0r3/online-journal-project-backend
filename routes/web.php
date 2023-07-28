@@ -40,11 +40,10 @@ Route::group(['prefix' => 'api'], function () {
     });
 
     // Delete an existing user
-    Route::group(['prefix' => '/delete/'], function () {
-        Route::post('/trainee', [UserController::class, 'deleteTrainee']);
-        Route::post('/supervisor', [UserController::class, 'deleteSupervisor']);
-        Route::post('/evaluator', [UserController::class, 'deleteEvaluator']);
-    });
+    Route::post('/delete/{id}', [UserController::class, 'deleteUser']);
+
+    // Reset user password
+    Route::post('/reset/password/{id}', [UserController::class, 'resetPassword']);
 
     // Assign a supervisor and evaluator to a trainee
     Route::post('/update/assign', [UserController::class, 'assignSupervisorAndEvaluator']);
