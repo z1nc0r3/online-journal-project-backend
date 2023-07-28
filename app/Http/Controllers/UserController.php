@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Connection;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -231,7 +232,6 @@ class UserController extends Controller
         return response()->json(['user' => $response]);
     }
 
-
     /* Handle updating user details */
 
     // Update trainee details
@@ -429,5 +429,37 @@ class UserController extends Controller
         }
 
         return response()->json(['message' => 'Users created successfully']);
+    }
+
+    // Reset user password
+    public function resetPassword($userId)
+    {
+        $user = User::where('id', $userId)
+            ->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $user->update([
+            'password' => "!Int3rn@1ee7"
+        ]);
+
+        return response()->json(['message' => 'Password reset successfully']);
+    }
+
+    // Delete user
+    public function deleteUser($userId)
+    {
+        $user = User::where('id', $userId)
+            ->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $user->delete();
+
+        return response()->json(['message' => 'User deleted successfully']);
     }
 }
