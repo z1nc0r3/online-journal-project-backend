@@ -62,7 +62,7 @@ Route::group(['prefix' => 'api'], function () {
         Route::get('/supervisor/{id}', [UserController::class, 'getSupervisorDetails']);
         Route::get('/evaluator/{id}', [UserController::class, 'getEvaluatorDetails']);
 
-        // Get user connections 
+        // Get user connections
         Route::get('/connection/trainee/{id}', [ConnectionController::class, 'getDetailsFromTraineeID']);
 
         // Get trainee records
