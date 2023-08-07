@@ -3,6 +3,8 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\JournalRecordsController;
+use App\Http\Controllers\ConnectionController;
+
 
 use Illuminate\Support\Facades\Route;
 
@@ -59,6 +61,9 @@ Route::group(['prefix' => 'api'], function () {
         Route::get('/trainee/{id}', [UserController::class, 'getTraineeDetails']);
         Route::get('/supervisor/{id}', [UserController::class, 'getSupervisorDetails']);
         Route::get('/evaluator/{id}', [UserController::class, 'getEvaluatorDetails']);
+
+        // Get user connections
+        Route::get('/connection/trainee/{id}', [ConnectionController::class, 'getDetailsFromTraineeID']);
 
         // Get trainee records
         Route::group(['prefix' => '/record/'], function () {

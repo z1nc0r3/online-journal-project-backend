@@ -49,6 +49,8 @@ class JournalRecordsController extends Controller
     {
         journal_records::create([
             'trainee_id' => $request->user_id,
+            'supervisor_id' => $request->supervisor_id,
+            'evaluator_id' => $request->evaluator_id,
             'description' => $request->description,
             'solutions' => $request->solutions,
             'week' => $request->week,
