@@ -11,6 +11,8 @@ class journal_records extends Model
 
     protected $fillable = [
         'trainee_id',
+        'supervisor_id',
+        'evaluator_id',
         'description',
         'solutions',
         'week',

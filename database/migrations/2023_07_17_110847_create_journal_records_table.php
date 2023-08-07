@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('journal_records', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('trainee_id');
+            $table->unsignedBigInteger('supervisor_id');
+            $table->unsignedBigInteger('evaluator_id');
             $table->string('description');
             $table->string('solutions');
             $table->string('week');
