@@ -50,8 +50,9 @@ Route::group(['prefix' => 'api'], function () {
     // Assign a supervisor and evaluator to a trainee
     Route::post('/update/assign', [UserController::class, 'assignSupervisorAndEvaluator']);
 
-    // Get a list of users
+    // Get routes
     Route::group(['prefix' => '/get/'], function () {
+        // Get a list of users
         Route::get('/trainee/list', [UserController::class, 'getTraineeList']);
         Route::get('/supervisor/list', [UserController::class, 'getSupervisorList']);
         Route::get('/evaluator/list', [UserController::class, 'getEvaluatorList']);
@@ -61,20 +62,22 @@ Route::group(['prefix' => 'api'], function () {
         Route::get('/supervisor/{id}', [UserController::class, 'getSupervisorDetails']);
         Route::get('/evaluator/{id}', [UserController::class, 'getEvaluatorDetails']);
 
+        // Get user connections 
         Route::get('/connection/trainee/{id}', [ConnectionController::class, 'getDetailsFromTraineeID']);
 
-
-
-
+        // Get trainee records
+        Route::group(['prefix' => '/record/'], function () {
+            Route::get('/currentMonth/week/{trainee_id}', [JournalRecordsController::class, 'getCurrentMonthRecords']);
+            Route::get('/week/{trainee_id}', [JournalRecordsController::class, 'getAllTraineeRecords']);
+            Route::get('/all/{supervisor_id}', [JournalRecordsController::class, 'getAllTraineeRecordsForSupervisor']);
+        });
     });
 
-    Route::group(['prefix' => '/record/'], function () {
-        Route::get('/currentMonth/week/{trainee_id}', [JournalRecordsController::class, 'getCurrentMonthRecords']);
-        Route::get('/week/{trainee_id}', [JournalRecordsController::class, 'getAllRecords']);
-
+    // Set routes
+    Route::group(['prefix' => '/set/'], function () {
+        Route::group(['prefix' => '/record/'], function () {
+            Route::post('/week', [JournalRecordsController::class, 'createRecord']);
+        });
     });
 
-    Route::group(['prefix' => '/addRecord/'], function () {
-        Route::post('/week', [JournalRecordsController::class, 'createRecord']);
-    });
 });

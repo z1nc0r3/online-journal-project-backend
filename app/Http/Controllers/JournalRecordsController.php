@@ -9,7 +9,8 @@ use Illuminate\Http\Request;
 
 class JournalRecordsController extends Controller
 {
-    public function getAllRecords($trainee_id)
+    // get all records for a trainee
+    public function getAllTraineeRecords($trainee_id)
     {
         $records = journal_records::select('id', 'description', 'solutions', 'week', 'month', 'year')
                         ->where('trainee_id', $trainee_id)
@@ -18,6 +19,7 @@ class JournalRecordsController extends Controller
         return response()->json(['records' => $records]);
     }
 
+    // get current month records in a month for a trainee
     public function getCurrentMonthRecords(Request $request, $trainee_id)
     {
         $month = $request->query('month');
@@ -32,9 +34,19 @@ class JournalRecordsController extends Controller
         return response()->json(['records' => $records]);
     }
 
+    // get all trainee records for a supervisor
+    public function getAllTraineeRecordsForSupervisor($supervisor_id)
+    {
+        $records = journal_records::select('id', 'trainee_id', 'evaluator_id', 'description', 'solutions', 'week', 'month', 'year')
+                        ->where('supervisor_id', $supervisor_id)
+                        ->get();
+
+        return response()->json(['records' => $records]);
+    }
+
+    // create new record
     public function createRecord(Request $request)
     {
-
         journal_records::create([
             'trainee_id' => $request->user_id,
             'description' => $request->description,
