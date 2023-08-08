@@ -60,4 +60,46 @@ class JournalRecordsController extends Controller
 
         return response()->json(['message' => 'Record added successfully']);
     }
+
+    // get current month records in a month for a trainee
+    public function getCurrentWeekRecord(Request $request, $trainee_id)
+    {
+        $week = $request->query('week');
+        $month = $request->query('month');
+        $year = $request->query('year');
+
+        $records = journal_records::select('id', 'description', 'solutions', 'week')
+                        ->where('trainee_id', $trainee_id)
+                        ->where('week', $week)
+                        ->where('month', $month) // Assuming you want to filter by creation date
+                        ->where('year', $year)
+                        ->first();
+
+        return response()->json(['record' => $records]);
+    }
+
+    // Update week record
+    public function updateWeekRecord(Request $request, $trainee_id)
+    {
+        $week = $request->week;
+        $month = $request->month;
+        $year = $request->year;
+        $record = journal_records::where('trainee_id', $trainee_id)
+                        ->where('week', $week)
+                        ->where('month', $month)
+                        ->where('year', $year)
+                        ->first();
+
+        if (!$record) {
+            return response()->json(['message' => 'Record not found'], 404);
+        }
+
+        $record->update([
+            'description' => $request->description,
+            'solutions' => $request->solutions,
+        ]);
+        return response()->json(['message' => 'Current Week Record Updated Successfully']);
+    }
+
+
 }

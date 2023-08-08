@@ -34,11 +34,17 @@ Route::group(['prefix' => 'api'], function () {
         Route::post('/bulk', [UserController::class, 'createBulkUsers']);
     });
 
-    // Update an existing user
+    // Update
     Route::group(['prefix' => '/update/'], function () {
+        // Update an existing user
         Route::post('/trainee/{id}', [UserController::class, 'updateTrainee']);
         Route::post('/supervisor/{id}', [UserController::class, 'updateSupervisor']);
         Route::post('/evaluator/{id}', [UserController::class, 'updateEvaluator']);
+
+        // Record update
+        Route::group(['prefix' => '/record/'], function () {
+            Route::post('/week/{trainee_id}', [JournalRecordsController::class, 'updateWeekRecord']);
+        });
     });
 
     // Delete an existing user
@@ -67,7 +73,8 @@ Route::group(['prefix' => 'api'], function () {
 
         // Get trainee records
         Route::group(['prefix' => '/record/'], function () {
-            Route::get('/currentMonth/week/{trainee_id}', [JournalRecordsController::class, 'getCurrentMonthRecords']);
+            Route::get('/current/week/{trainee_id}', [JournalRecordsController::class, 'getCurrentWeekRecord']);
+            Route::get('/current/month/{trainee_id}', [JournalRecordsController::class, 'getCurrentMonthRecords']);
             Route::get('/week/{trainee_id}', [JournalRecordsController::class, 'getAllTraineeRecords']);
             Route::get('/all/{supervisor_id}', [JournalRecordsController::class, 'getAllTraineeRecordsForSupervisor']);
         });
