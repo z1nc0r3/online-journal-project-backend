@@ -59,16 +59,16 @@ class User extends Authenticatable
 
     public function traineeConnection()
     {
-        return $this->hasOne(Connection::class, 'trainee_id');
+        return $this->hasMany(Connection::class, 'trainee_id');
     }
 
     public function supervisorConnection()
     {
-        return $this->hasOne(Connection::class, 'supervisor_id');
+        return $this->hasMany(Connection::class, 'supervisor_id');
     }
 
     public function evaluatorConnection()
     {
-        return $this->hasOne(Connection::class, 'evaluator_id');
+        return $this->hasMany(Connection::class, 'evaluator_id');
     }
 }
