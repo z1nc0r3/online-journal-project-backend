@@ -63,6 +63,10 @@ Route::group(['prefix' => 'api'], function () {
         Route::get('/supervisor/list', [UserController::class, 'getSupervisorList']);
         Route::get('/evaluator/list', [UserController::class, 'getEvaluatorList']);
 
+        // Get filtered trainee list
+        Route::get('/trainee/list/supervisor/{supervisor_id}', [UserController::class, 'getTraineeListWithSupervisorId']);
+        Route::get('/trainee/list/evaluator/{evaluator_id}', [UserController::class, 'getTraineeListWithEvaluatorId']);
+
         // Get user details
         Route::get('/trainee/{id}', [UserController::class, 'getTraineeDetails']);
         Route::get('/supervisor/{id}', [UserController::class, 'getSupervisorDetails']);

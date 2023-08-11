@@ -103,6 +103,42 @@ class UserController extends Controller
         return response()->json(['trainees' => $trainees]);
     }
 
+    // Get Trainee list with supervisor id
+    public function getTraineeListWithSupervisorId($supervisorId)
+    {
+        $trainees = User::with(['traineeConnection'])
+            ->select('id', 'fName', 'department', 'duration')
+            ->where('role', 'trainee')
+            ->whereHas('traineeConnection', function ($query) use ($supervisorId) {
+                $query->where('supervisor_id', $supervisorId);
+            })
+            ->get();
+
+        if (!$trainees) {
+            return response()->json(['error' => 'No trainees found'], 404);
+        }
+
+        return response()->json(['trainees' => $trainees]);
+    }
+
+    // Get Trainee list with evaluator id
+    public function getTraineeListWithEvaluatorId($evaluatorId)
+    {
+        $trainees = User::with(['traineeConnection'])
+            ->select('id', 'fName', 'department', 'duration')
+            ->where('role', 'trainee')
+            ->whereHas('traineeConnection', function ($query) use ($evaluatorId) {
+                $query->where('evaluator_id', $evaluatorId);
+            })
+            ->get();
+
+        if (!$trainees) {
+            return response()->json(['error' => 'No trainees found'], 404);
+        }
+
+        return response()->json(['trainees' => $trainees]);
+    }
+
     // Get supervisor list
     public function getSupervisorList()
     {
@@ -110,7 +146,7 @@ class UserController extends Controller
             ->select('id', 'fName', 'estName')
             ->where('role', 'supervisor')
             ->get();
-        
+
         if (!$supervisors) {
             return response()->json(['error' => 'No supervisors found'], 404);
         }
