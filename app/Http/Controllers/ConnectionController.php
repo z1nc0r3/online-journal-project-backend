@@ -16,4 +16,16 @@ class ConnectionController extends Controller
 
         return response()->json(['records' => $records]);
     }
+
+    public function getDetailsFromSupervisorID(Request $request, $supervisor_id)
+    {
+        $trainee_id = $request->query('trainee_id');
+
+        $records = Connection::select()
+                        ->where('supervisor_id', $supervisor_id)
+                        ->where('trainee_id', $trainee_id)
+                        ->first();
+
+        return response()->json(['records' => $records]);
+    }
 }

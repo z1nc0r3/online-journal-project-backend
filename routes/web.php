@@ -74,6 +74,7 @@ Route::group(['prefix' => 'api'], function () {
 
         // Get user connections
         Route::get('/connection/trainee/{id}', [ConnectionController::class, 'getDetailsFromTraineeID']);
+        Route::get('/connection/supervisor/{id}', [ConnectionController::class, 'getDetailsFromSupervisorID']);
 
         // Get trainee records
         Route::group(['prefix' => '/record/'], function () {
@@ -87,8 +88,7 @@ Route::group(['prefix' => 'api'], function () {
     // Set routes
     Route::group(['prefix' => '/set/'], function () {
         Route::group(['prefix' => '/record/'], function () {
-            Route::post('/week', [JournalRecordsController::class, 'createRecord']);
+            Route::post('/trainee/week', [JournalRecordsController::class, 'createRecord']);
         });
     });
-
 });
