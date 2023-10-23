@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class journal_records extends Model
+class MonthJournalRecord extends Model
 {
     use HasFactory;
 
@@ -13,9 +13,8 @@ class journal_records extends Model
         'trainee_id',
         'supervisor_id',
         'evaluator_id',
-        'description',
-        'solutions',
-        'week',
+        'records',
+        'number_of_leave',
         'month',
         'year',
     ];
@@ -32,5 +31,4 @@ class journal_records extends Model
     {
         return $this->belongsTo(User::class, 'evaluator_id');
     }
-
 }
