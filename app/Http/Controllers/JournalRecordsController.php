@@ -13,8 +13,8 @@ class JournalRecordsController extends Controller
     public function getAllTraineeRecords($trainee_id)
     {
         $records = journal_records::select('id', 'description', 'solutions', 'week', 'month', 'year')
-                        ->where('trainee_id', $trainee_id)
-                        ->get();
+            ->where('trainee_id', $trainee_id)
+            ->get();
 
         return response()->json(['records' => $records]);
     }
@@ -26,10 +26,10 @@ class JournalRecordsController extends Controller
         $year = $request->query('year');
 
         $records = journal_records::select('id', 'description', 'solutions', 'week')
-                        ->where('trainee_id', $trainee_id)
-                        ->where('month', $month) // Assuming you want to filter by creation date
-                        ->where('year', $year)
-                        ->get();
+            ->where('trainee_id', $trainee_id)
+            ->where('month', $month) // Assuming you want to filter by creation date
+            ->where('year', $year)
+            ->get();
 
         return response()->json(['records' => $records]);
     }
@@ -38,10 +38,48 @@ class JournalRecordsController extends Controller
     public function getAllTraineeRecordsForSupervisor($supervisor_id)
     {
         $records = journal_records::select('id', 'trainee_id', 'evaluator_id', 'description', 'solutions', 'week', 'month', 'year')
-                        ->where('supervisor_id', $supervisor_id)
-                        ->get();
+            ->where('supervisor_id', $supervisor_id)
+            ->get();
 
         return response()->json(['records' => $records]);
+    }
+
+    // get all trainee records for a supervisor which are not approved
+    public function getAllTraineeRecordsForSupervisorNotApproved($supervisor_id)
+    {
+        $records = journal_records::select('id', 'trainee_id', 'evaluator_id', 'description', 'solutions', 'week', 'month', 'year')
+            ->where('supervisor_id', $supervisor_id)
+            ->where('approved', 0)
+            ->get();
+
+        $groupedData = $records->groupBy('trainee_id')
+            ->map(function ($traineeRecords) {
+                return $traineeRecords->groupBy(['month', 'week'])
+                    ->map(function ($weekRecords) {
+                        return $weekRecords->values();
+                    });
+            });
+
+        return response()->json(['records' => $groupedData]);
+    }
+
+    // get all trainee records for a supervisor which are approved
+    public function getAllTraineeRecordsForSupervisorApproved($supervisor_id)
+    {
+        $records = journal_records::select('id', 'trainee_id', 'evaluator_id', 'description', 'solutions', 'week', 'month', 'year')
+            ->where('supervisor_id', $supervisor_id)
+            ->where('approved', 1)
+            ->get();
+
+        $groupedData = $records->groupBy('trainee_id')
+            ->map(function ($traineeRecords) {
+                return $traineeRecords->groupBy(['month', 'week'])
+                    ->map(function ($weekRecords) {
+                        return $weekRecords->values();
+                    });
+            });
+
+        return response()->json(['records' => $groupedData]);
     }
 
     // create new record
@@ -69,11 +107,11 @@ class JournalRecordsController extends Controller
         $year = $request->query('year');
 
         $records = journal_records::select('id', 'description', 'solutions', 'week')
-                        ->where('trainee_id', $trainee_id)
-                        ->where('week', $week)
-                        ->where('month', $month) // Assuming you want to filter by creation date
-                        ->where('year', $year)
-                        ->first();
+            ->where('trainee_id', $trainee_id)
+            ->where('week', $week)
+            ->where('month', $month) // Assuming you want to filter by creation date
+            ->where('year', $year)
+            ->first();
 
         return response()->json(['record' => $records]);
     }
@@ -85,10 +123,10 @@ class JournalRecordsController extends Controller
         $month = $request->month;
         $year = $request->year;
         $record = journal_records::where('trainee_id', $trainee_id)
-                        ->where('week', $week)
-                        ->where('month', $month)
-                        ->where('year', $year)
-                        ->first();
+            ->where('week', $week)
+            ->where('month', $month)
+            ->where('year', $year)
+            ->first();
 
         if (!$record) {
             return response()->json(['message' => 'Record not found'], 404);
@@ -100,6 +138,4 @@ class JournalRecordsController extends Controller
         ]);
         return response()->json(['message' => 'Current Week Record Updated Successfully']);
     }
-
-
 }
