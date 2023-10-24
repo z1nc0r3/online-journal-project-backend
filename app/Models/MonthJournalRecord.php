@@ -17,6 +17,7 @@ class MonthJournalRecord extends Model
         'number_of_leave',
         'month',
         'year',
+        'approved'
     ];
 
     public function trainee()

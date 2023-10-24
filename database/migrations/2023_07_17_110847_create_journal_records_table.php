@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('week');
             $table->string('month');
             $table->string('year');
+            $table->tinyInteger('approved')->default(0);
             $table->timestamps();
 
 
