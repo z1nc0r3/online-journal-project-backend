@@ -57,4 +57,45 @@ class MonthJournalRecordController extends Controller
 
         return response()->json(['message' => 'Review added successfully']);
     }
+
+    // get all trainee records for a supervisor which are approved
+    public function getAllTraineeRecordsForSupervisorApproved($supervisor_id)
+    {
+        $records = journal_records::select('trainee_id', 'evaluator_id', 'description', 'solutions', 'week', 'month', 'year')
+            ->where('supervisor_id', $supervisor_id)
+            ->where('approved', 1)
+            ->get();
+
+        $groupedData = $records->groupBy('trainee_id')
+            ->map(function ($traineeRecords) {
+                return $traineeRecords->groupBy(['month'])
+                    ->map(function ($weekRecords) {
+                        return $weekRecords->values();
+                    });
+            });
+
+        $reports = MonthJournalRecord::select('trainee_id', 'records', 'number_of_leave', 'month', 'year')
+            ->where('supervisor_id', $supervisor_id)
+            ->get();
+
+        $groupedReports = $reports->groupBy('trainee_id')
+            ->map(function ($traineeRecords) {
+                return $traineeRecords->values();
+            });
+
+
+        $mergedData = $groupedData; // Start with a copy of A
+
+        foreach ($groupedReports as $trainee_id => $entries) {
+            foreach ($entries as $entry) {
+                $mergedData[$trainee_id][$entry["month"]] = [
+                    "reports" => $entry["records"],
+                    "number_of_leave" => $entry["number_of_leave"],
+                    "records" => $groupedData[$trainee_id][$entry["month"]]
+                ];
+            }
+        }
+
+        return response()->json(['records' => $mergedData]);
+    }
 }
