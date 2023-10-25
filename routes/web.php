@@ -5,8 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\JournalRecordsController;
 use App\Http\Controllers\FinalJournalRecordsController;
 use App\Http\Controllers\ConnectionController;
-
-
+use App\Http\Controllers\MonthJournalRecordController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -77,7 +76,7 @@ Route::group(['prefix' => 'api'], function () {
         Route::get('/connection/trainee/{id}', [ConnectionController::class, 'getDetailsFromTraineeID']);
         Route::get('/connection/supervisor/{id}', [ConnectionController::class, 'getDetailsFromSupervisorID']);
 
-        // Get trainee records
+        // Handle journal records
         Route::group(['prefix' => '/record/'], function () {
             Route::get('/current/week/{trainee_id}', [JournalRecordsController::class, 'getCurrentWeekRecord']);
             Route::get('/current/month/{trainee_id}', [JournalRecordsController::class, 'getCurrentMonthRecords']);
@@ -103,6 +102,11 @@ Route::group(['prefix' => 'api'], function () {
         // Set approval
         Route::group(['prefix' => '/approve/'], function () {
             Route::post('/{evaluator_id}', [FinalJournalRecordsController::class, 'setApproval']);
+        });
+        
+        // Handle reviews
+        Route::group(['prefix' => '/review/'], function () {
+            Route::post('/add/supervisor', [MonthJournalRecordController::class, 'addSupervisorReview']);
         });
     });
 });
