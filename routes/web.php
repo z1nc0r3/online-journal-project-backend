@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\JournalRecordsController;
+use App\Http\Controllers\FinalJournalRecordsController;
 use App\Http\Controllers\ConnectionController;
 
 
@@ -83,12 +84,27 @@ Route::group(['prefix' => 'api'], function () {
             Route::get('/week/{trainee_id}', [JournalRecordsController::class, 'getAllTraineeRecords']);
             Route::get('/all/{supervisor_id}', [JournalRecordsController::class, 'getAllTraineeRecordsForSupervisor']);
         });
+
+        // Get pending approval data
+        Route::group(['prefix' => '/approve/'], function () {
+            Route::get('/{evaluator_id}', [FinalJournalRecordsController::class, 'getPendingApprovalData']);
+        });
+
+        // Get approved data
+        Route::group(['prefix' => '/approved/'], function () {
+            Route::get('/{evaluator_id}', [FinalJournalRecordsController::class, 'getApprovedData']);
+        });
     });
 
     // Set routes
     Route::group(['prefix' => '/set/'], function () {
         Route::group(['prefix' => '/record/'], function () {
             Route::post('/trainee/week', [JournalRecordsController::class, 'createRecord']);
+        });
+
+        // Set approval
+        Route::group(['prefix' => '/approve/'], function () {
+            Route::post('/{evaluator_id}', [FinalJournalRecordsController::class, 'setApproval']);
         });
     });
 });
