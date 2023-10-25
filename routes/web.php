@@ -5,8 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\JournalRecordsController;
 use App\Http\Controllers\FinalJournalRecordsController;
 use App\Http\Controllers\ConnectionController;
-
-
+use App\Http\Controllers\MonthJournalRecordController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -77,24 +76,20 @@ Route::group(['prefix' => 'api'], function () {
         Route::get('/connection/trainee/{id}', [ConnectionController::class, 'getDetailsFromTraineeID']);
         Route::get('/connection/supervisor/{id}', [ConnectionController::class, 'getDetailsFromSupervisorID']);
 
-        // Get trainee records
+        // Handle journal records
         Route::group(['prefix' => '/record/'], function () {
             Route::get('/current/week/{trainee_id}', [JournalRecordsController::class, 'getCurrentWeekRecord']);
             Route::get('/current/month/{trainee_id}', [JournalRecordsController::class, 'getCurrentMonthRecords']);
             Route::get('/week/{trainee_id}', [JournalRecordsController::class, 'getAllTraineeRecords']);
             Route::get('/all/{supervisor_id}', [JournalRecordsController::class, 'getAllTraineeRecordsForSupervisor']);
-            Route::get('/all/notapproved/{supervisor_id}', [JournalRecordsController::class, 'getAllTraineeRecordsForSupervisorNotApproved']);
-            Route::get('/all/approved/{supervisor_id}', [JournalRecordsController::class, 'getAllTraineeRecordsForSupervisorApproved']);
-        });
 
-        // Get pending approval data
-        Route::group(['prefix' => '/approve/'], function () {
-            Route::get('/{evaluator_id}', [FinalJournalRecordsController::class, 'getPendingApprovalData']);
-        });
+            // Get pending and approved records for supervisor
+            Route::get('/all/pending/supervisor/{supervisor_id}', [JournalRecordsController::class, 'getAllTraineeRecordsForSupervisorPending']);
+            Route::get('/all/approved/supervisor/{supervisor_id}', [JournalRecordsController::class, 'getAllTraineeRecordsForSupervisorApproved']);
 
-        // Get approved data
-        Route::group(['prefix' => '/approved/'], function () {
-            Route::get('/{evaluator_id}', [FinalJournalRecordsController::class, 'getApprovedData']);
+            // Get pending and approved final journal records for evaluator
+            Route::get('/all/pending/evaluator/{evaluator_id}', [FinalJournalRecordsController::class, 'getPendingApprovalData']);
+            Route::get('/all/approved/evaluator/{evaluator_id}', [FinalJournalRecordsController::class, 'getApprovedData']);
         });
     });
 
@@ -107,6 +102,11 @@ Route::group(['prefix' => 'api'], function () {
         // Set approval
         Route::group(['prefix' => '/approve/'], function () {
             Route::post('/{evaluator_id}', [FinalJournalRecordsController::class, 'setApproval']);
+        });
+        
+        // Handle reviews
+        Route::group(['prefix' => '/review/'], function () {
+            Route::post('/add/supervisor', [MonthJournalRecordController::class, 'addSupervisorReview']);
         });
     });
 });
