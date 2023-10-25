@@ -45,7 +45,7 @@ class JournalRecordsController extends Controller
     }
 
     // get all trainee records for a supervisor which are not approved
-    public function getAllTraineeRecordsForSupervisorNotApproved($supervisor_id)
+    public function getAllTraineeRecordsForSupervisorPending($supervisor_id)
     {
         $records = journal_records::select('id', 'trainee_id', 'evaluator_id', 'description', 'solutions', 'week', 'month', 'year')
             ->where('supervisor_id', $supervisor_id)
