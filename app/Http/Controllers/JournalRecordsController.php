@@ -37,7 +37,7 @@ class JournalRecordsController extends Controller
     // get all trainee records for a supervisor
     public function getAllTraineeRecordsForSupervisor($supervisor_id)
     {
-        $records = journal_records::select('id', 'trainee_id', 'evaluator_id', 'description', 'solutions', 'week', 'month', 'year')
+        $records = journal_records::select('trainee_id', 'evaluator_id', 'description', 'solutions', 'week', 'month', 'year')
             ->where('supervisor_id', $supervisor_id)
             ->get();
 
@@ -47,33 +47,14 @@ class JournalRecordsController extends Controller
     // get all trainee records for a supervisor which are not approved
     public function getAllTraineeRecordsForSupervisorPending($supervisor_id)
     {
-        $records = journal_records::select('id', 'trainee_id', 'evaluator_id', 'description', 'solutions', 'week', 'month', 'year')
+        $records = journal_records::select('trainee_id', 'evaluator_id', 'description', 'solutions', 'week', 'month', 'year')
             ->where('supervisor_id', $supervisor_id)
             ->where('approved', 0)
             ->get();
 
         $groupedData = $records->groupBy('trainee_id')
             ->map(function ($traineeRecords) {
-                return $traineeRecords->groupBy(['month', 'week'])
-                    ->map(function ($weekRecords) {
-                        return $weekRecords->values();
-                    });
-            });
-
-        return response()->json(['records' => $groupedData]);
-    }
-
-    // get all trainee records for a supervisor which are approved
-    public function getAllTraineeRecordsForSupervisorApproved($supervisor_id)
-    {
-        $records = journal_records::select('id', 'trainee_id', 'evaluator_id', 'description', 'solutions', 'week', 'month', 'year')
-            ->where('supervisor_id', $supervisor_id)
-            ->where('approved', 1)
-            ->get();
-
-        $groupedData = $records->groupBy('trainee_id')
-            ->map(function ($traineeRecords) {
-                return $traineeRecords->groupBy(['month', 'week'])
+                return $traineeRecords->groupBy(['month'])
                     ->map(function ($weekRecords) {
                         return $weekRecords->values();
                     });

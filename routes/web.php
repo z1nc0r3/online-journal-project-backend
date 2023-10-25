@@ -85,7 +85,7 @@ Route::group(['prefix' => 'api'], function () {
 
             // Get pending and approved records for supervisor
             Route::get('/all/pending/supervisor/{supervisor_id}', [JournalRecordsController::class, 'getAllTraineeRecordsForSupervisorPending']);
-            Route::get('/all/approved/supervisor/{supervisor_id}', [JournalRecordsController::class, 'getAllTraineeRecordsForSupervisorApproved']);
+            Route::get('/all/approved/supervisor/{supervisor_id}', [MonthJournalRecordController::class, 'getAllTraineeRecordsForSupervisorApproved']);
 
             // Get pending and approved final journal records for evaluator
             Route::get('/all/pending/evaluator/{evaluator_id}', [FinalJournalRecordsController::class, 'getPendingApprovalData']);
