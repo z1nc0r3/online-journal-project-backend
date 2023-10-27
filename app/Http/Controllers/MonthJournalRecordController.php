@@ -27,6 +27,34 @@ class MonthJournalRecordController extends Controller
     // Set supervisor review
     public function addSupervisorReview(Request $request)
     {
+        $request->validate([
+            'trainee_id' => 'required',
+            'supervisor_id' => 'required',
+            'evaluator_id' => 'required',
+            'record' => 'required',
+            'leaves' => 'required',
+            'month' => 'required',
+            'year' => 'required'
+        ]);
+
+        $this->makeApproved($request['trainee_id'], $request['month']);
+
+        MonthJournalRecord::create([
+            'trainee_id' => $request['trainee_id'],
+            'supervisor_id' => $request['supervisor_id'],
+            'evaluator_id' => $request['evaluator_id'],
+            'records' => $request['record'],
+            'number_of_leave' => $request['leaves'],
+            'month' => $request['month'],
+            'year' => $request['year']
+        ]);
+
+        return response()->json(['message' => 'Review added successfully']);
+    }
+
+    // Update supervisor review
+    public function updateSupervisorReview(Request $request)
+    {
         foreach ($request->all() as $record) {
             $validator = Validator::make($record, [
                 'trainee_id' => 'required',
@@ -42,20 +70,16 @@ class MonthJournalRecordController extends Controller
                 return response()->json(['error' => 'Validation failed'], 422);
             }
 
-            $this->makeApproved($record['trainee_id'], $record['month']);
-
-            MonthJournalRecord::create([
-                'trainee_id' => $record['trainee_id'],
-                'supervisor_id' => $record['supervisor_id'],
-                'evaluator_id' => $record['evaluator_id'],
-                'records' => $record['record'],
-                'number_of_leave' => $record['leaves'],
-                'month' => $record['month'],
-                'year' => $record['year']
-            ]);
+            MonthJournalRecord::where('trainee_id', $record['trainee_id'])
+                ->where('month', $record['month'])
+                ->where('year', $record['year'])
+                ->update([
+                    'records' => $record['record'],
+                    'number_of_leave' => $record['leaves']
+                ]);
         }
 
-        return response()->json(['message' => 'Review added successfully']);
+        return response()->json(['message' => 'Review updated successfully']);
     }
 
     // get all trainee records for a supervisor which are approved

@@ -107,6 +107,7 @@ Route::group(['prefix' => 'api'], function () {
         // Handle reviews
         Route::group(['prefix' => '/review/'], function () {
             Route::post('/add/supervisor', [MonthJournalRecordController::class, 'addSupervisorReview']);
+            Route::post('/update/supervisor', [MonthJournalRecordController::class, 'updateSupervisorReview']);
         });
     });
 });
