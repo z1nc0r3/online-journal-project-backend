@@ -16,6 +16,7 @@ class FinalJournalRecordsController extends Controller
     // Get data to pending approval page
     function getPendingApprovalRecords($evaluator_id)
     {
+        // get list of trainees who have completed their internship
         $monthlyRecords = MonthJournalRecord::select('trainee_id')
             ->where('evaluator_id', $evaluator_id)
             ->where('approved', 0)
@@ -45,16 +46,43 @@ class FinalJournalRecordsController extends Controller
             }
         }
 
-        /* $reports = final_journal_records::select('id', 'trainee_id', 'records', 'number_of_leave', 'month', 'year')
-            ->where('evaluator_id', $evaluator_id)
+        // get all records for above trainees
+        $records = journal_records::select('trainee_id', 'description', 'solutions', 'week', 'month', 'year')
+            ->whereIn('trainee_id', $traineeIdsWithSameDuration)
+            ->where('approved', 1)
+            ->get();
+
+        $groupedData = $records->groupBy('trainee_id')
+            ->map(function ($traineeRecords) {
+                return $traineeRecords->groupBy(['month'])
+                    ->map(function ($weekRecords) {
+                        return $weekRecords->values();
+                    });
+            });
+
+        $reports = MonthJournalRecord::select('id', 'trainee_id', 'records', 'number_of_leave', 'month', 'year')
+            ->whereIn('trainee_id', $traineeIdsWithSameDuration)
             ->get();
 
         $groupedReports = $reports->groupBy('trainee_id')
             ->map(function ($traineeRecords) {
                 return $traineeRecords->values();
-            }); */
+            });
 
-        return response()->json(['records' => $groupedDurations]);
+        $mergedData = $groupedData;
+
+        foreach ($groupedReports as $trainee_id => $entries) {
+            foreach ($entries as $entry) {
+                $mergedData[$trainee_id][$entry["month"]] = [
+                    "id" => $entry["id"],
+                    "reports" => $entry["records"],
+                    "number_of_leave" => $entry["number_of_leave"],
+                    "records" => $groupedData[$trainee_id][$entry["month"]]
+                ];
+            }
+        }
+
+        return response()->json(['records' => $mergedData]);
     }
 
     // get all trainee records + supervisor reviews using trainee_id
