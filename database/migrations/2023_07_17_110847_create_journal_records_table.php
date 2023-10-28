@@ -23,8 +23,6 @@ return new class extends Migration
             $table->string('year');
             $table->tinyInteger('approved')->default(0);
             $table->timestamps();
-
-
             $table->foreign('trainee_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
