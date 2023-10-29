@@ -48,7 +48,6 @@ class FinalJournalRecordsController extends Controller
         return $traineeIdsWithSameDuration;
     }
 
-
     function getPendingApprovalRecords($evaluator_id)
     {
         $traineeIdsWithSameDuration[] = $this->getCompletedTraineeList($evaluator_id);
@@ -146,7 +145,7 @@ class FinalJournalRecordsController extends Controller
             ->where('evaluator_id', $evaluator_id)
             ->get();
 
-        $records = journal_records::select('trainee_id', 'evaluator_id', 'description', 'solutions', 'week', 'month', 'year')
+        $records = journal_records::select('trainee_id', 'description', 'solutions', 'week', 'month', 'year')
             ->whereIn('trainee_id', $completedTraineeList)
             ->where('approved', 1)
             ->get();
@@ -159,7 +158,7 @@ class FinalJournalRecordsController extends Controller
                     });
             });
 
-        $reports = MonthJournalRecord::select('id', 'trainee_id', 'records', 'number_of_leave', 'month', 'year')
+        $reports = MonthJournalRecord::select('trainee_id', 'records', 'number_of_leave', 'month', 'year')
             ->whereIn('trainee_id', $completedTraineeList)
             ->get();
 
@@ -168,7 +167,7 @@ class FinalJournalRecordsController extends Controller
                 return $traineeRecords->values();
             });
 
-        $eval_reports = final_journal_records::select('id', 'trainee_id', 'record')
+        $eval_reports = final_journal_records::select('trainee_id', 'record')
             ->where('evaluator_id', $evaluator_id)
             ->get();
 
@@ -177,14 +176,13 @@ class FinalJournalRecordsController extends Controller
                 return $traineeRecords->values();
             });
 
-        $mergedData = $groupedData; // Start with a copy of A
+        $mergedData = $groupedData;
 
         foreach ($groupedReports as $trainee_id => $entries) {
             foreach ($entries as $entry) {
                 [
                     $mergedData[$trainee_id]["evalReport"] = $groupedEvalReports[$trainee_id][0]["record"],
                     $mergedData[$trainee_id][$entry["month"]] = [
-                        "id" => $entry["id"],
                         "reports" => $entry["records"],
                         "number_of_leave" => $entry["number_of_leave"],
                         "weekly" => $groupedData[$trainee_id][$entry["month"]],
