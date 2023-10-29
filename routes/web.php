@@ -108,6 +108,9 @@ Route::group(['prefix' => 'api'], function () {
         Route::group(['prefix' => '/review/'], function () {
             Route::post('/add/supervisor', [MonthJournalRecordController::class, 'addSupervisorReview']);
             Route::post('/update/supervisor', [MonthJournalRecordController::class, 'updateSupervisorReview']);
+
+            Route::post('/add/evaluator', [FinalJournalRecordsController::class, 'addEvaluatorReview']);
+            Route::post('/update/evaluator', [FinalJournalRecordsController::class, 'updateEvaluatorReview']);
         });
     });
 });

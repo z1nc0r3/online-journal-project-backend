@@ -13,7 +13,7 @@ class final_journal_records extends Model
         'trainee_id',
         'supervisor_id',
         'evaluator_id',
-        'records',
+        'record',
     ];
 
     public function trainee()
