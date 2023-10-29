@@ -176,13 +176,13 @@ class FinalJournalRecordsController extends Controller
                 return $traineeRecords->values();
             });
 
-        $mergedData = $groupedData;
+        $mergedData = [];
 
         foreach ($groupedReports as $trainee_id => $entries) {
             foreach ($entries as $entry) {
                 [
                     $mergedData[$trainee_id]["evalReport"] = $groupedEvalReports[$trainee_id][0]["record"],
-                    $mergedData[$trainee_id][$entry["month"]] = [
+                    $mergedData[$trainee_id]["months"][$entry["month"]] = [
                         "reports" => $entry["records"],
                         "number_of_leave" => $entry["number_of_leave"],
                         "weekly" => $groupedData[$trainee_id][$entry["month"]],
