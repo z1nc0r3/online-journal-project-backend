@@ -89,7 +89,7 @@ Route::group(['prefix' => 'api'], function () {
 
             // Get pending and approved final journal records for evaluator
             Route::get('/all/pending/evaluator/{evaluator_id}', [FinalJournalRecordsController::class, 'getPendingApprovalRecords']);
-            Route::get('/all/approved/evaluator/{evaluator_id}', [FinalJournalRecordsController::class, 'getApprovedData']);
+            Route::get('/all/approved/evaluator/{evaluator_id}', [FinalJournalRecordsController::class, 'getAllTraineeRecordsForEvaluatorApproved']);
         });
     });
 

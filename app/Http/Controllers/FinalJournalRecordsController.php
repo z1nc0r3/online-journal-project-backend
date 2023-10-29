@@ -12,7 +12,8 @@ use Illuminate\Http\Request;
 
 class FinalJournalRecordsController extends Controller
 {
-    function getPendingApprovalRecords($evaluator_id)
+    // get trainee list who have completed the training
+    function getCompletedTraineeList($evaluator_id)
     {
         // get list of trainees who have completed their internship
         $monthlyRecords = MonthJournalRecord::select('trainee_id')
@@ -43,6 +44,13 @@ class FinalJournalRecordsController extends Controller
                 $traineeIdsWithSameDuration[] = $traineeId;
             }
         }
+
+        return $traineeIdsWithSameDuration;
+    }
+
+    function getPendingApprovalRecords($evaluator_id)
+    {
+        $traineeIdsWithSameDuration[] = $this->getCompletedTraineeList($evaluator_id);
 
         // get all records for above trainees
         $records = journal_records::select('trainee_id', 'description', 'solutions', 'week', 'month', 'year')
@@ -83,87 +91,6 @@ class FinalJournalRecordsController extends Controller
         return response()->json(['records' => $mergedData]);
     }
 
-
-    // Get data which had the approval page
-    function getApprovedData($evaluator_id)
-    {
-        // Get evaluator id from request
-        $records = Connection::where('evaluator_id', $evaluator_id)->get();
-        // Need loop for run through all records
-        foreach ($records as $record) {
-            $trainee_id = $record->trainee_id;
-
-            // check every trainee id available in final journal records table
-            $final_records = final_journal_records::select()->where('trainee_id', $trainee_id)->first();
-
-            // if available get the final journal records table data by trainee id
-            if ($final_records != null) {
-                $month_records = MonthJournalRecord::select()->where('trainee_id', $trainee_id)->get();
-
-                // array
-                $response = [];
-
-                // for each month records get the month journal records table data by trainee id
-                foreach ($month_records as $month_record) {
-
-                    $month = $month_record->month;
-                    $year = $month_record->year;
-
-                    $records = journal_records::select()->where('trainee_id', $trainee_id)->where('month', $month)->where('year', $year)->where('approved', '1')->get();
-
-                    // Create an associative array to represent this month's data.
-                    $month_data = [
-                        'month_record' => $month_record, // You can adjust this to include only the details you want.
-                        'weeks' => $records
-                    ];
-
-                    // Append this month's data to the response array.
-                    $response[] = $month_data;
-                }
-
-                return response()->json(['data' => $response]);
-            }
-        }
-    }
-
-    // Set approval status
-    function setApproval(Request $request, $evaluator_id)
-    {
-        // Get trainee id from request
-        $trainee_id = $request->trainee_id;
-
-        // Get month and year from request
-        $month = $request->month;
-        $year = $request->year;
-
-        // Get approval status from request
-        $approval_status = $request->approval_status;
-
-        // Get final journal records table data by trainee id
-        $final_records = final_journal_records::select()->where('trainee_id', $trainee_id)->first();
-
-        // if not available create new record
-        if ($final_records == null) {
-            final_journal_records::create([
-                'trainee_id' => $trainee_id,
-                'evaluator_id' => $evaluator_id,
-                'month' => $month,
-                'year' => $year,
-                'approved' => $approval_status,
-            ]);
-        } else {
-            // if available update the record
-            final_journal_records::where('trainee_id', $trainee_id)->update([
-                'evaluator_id' => $evaluator_id,
-                'month' => $month,
-                'year' => $year,
-                'approved' => $approval_status,
-            ]);
-        }
-
-        return response()->json(['message' => 'Approval status updated successfully']);
-    }
-
     // Add evaluator review
     function addEvaluatorReview(Request $request)
     {
@@ -189,7 +116,6 @@ class FinalJournalRecordsController extends Controller
             ]);
 
             $this->makeApproved($trainee_id);
-            
         } else {
             // if available update the record
             final_journal_records::where('trainee_id', $trainee_id)->update([
@@ -210,5 +136,61 @@ class FinalJournalRecordsController extends Controller
             ]);
 
         return response()->json(['message' => 'Records set as approved.']);
+    }
+
+    // get all trainee records for a evaluator which are approved
+    public function getAllTraineeRecordsForEvaluatorApproved($evaluator_id)
+    {
+        $completedTraineeList = final_journal_records::select('trainee_id')
+            ->where('evaluator_id', $evaluator_id)
+            ->get();
+
+        $records = journal_records::select('trainee_id', 'description', 'solutions', 'week', 'month', 'year')
+            ->whereIn('trainee_id', $completedTraineeList)
+            ->where('approved', 1)
+            ->get();
+
+        $groupedData = $records->groupBy('trainee_id')
+            ->map(function ($traineeRecords) {
+                return $traineeRecords->groupBy(['month'])
+                    ->map(function ($weekRecords) {
+                        return $weekRecords->values();
+                    });
+            });
+
+        $reports = MonthJournalRecord::select('trainee_id', 'records', 'number_of_leave', 'month', 'year')
+            ->whereIn('trainee_id', $completedTraineeList)
+            ->get();
+
+        $groupedReports = $reports->groupBy('trainee_id')
+            ->map(function ($traineeRecords) {
+                return $traineeRecords->values();
+            });
+
+        $eval_reports = final_journal_records::select('trainee_id', 'record')
+            ->where('evaluator_id', $evaluator_id)
+            ->get();
+
+        $groupedEvalReports = $eval_reports->groupBy('trainee_id')
+            ->map(function ($traineeRecords) {
+                return $traineeRecords->values();
+            });
+
+        $mergedData = [];
+
+        foreach ($groupedReports as $trainee_id => $entries) {
+            foreach ($entries as $entry) {
+                [
+                    $mergedData[$trainee_id]["evalReport"] = $groupedEvalReports[$trainee_id][0]["record"],
+                    $mergedData[$trainee_id]["months"][$entry["month"]] = [
+                        "reports" => $entry["records"],
+                        "number_of_leave" => $entry["number_of_leave"],
+                        "weekly" => $groupedData[$trainee_id][$entry["month"]],
+                    ]
+                ];
+            }
+        }
+
+        return response()->json(['records' => $mergedData]);
     }
 }
