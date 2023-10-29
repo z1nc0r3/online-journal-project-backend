@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('number_of_leave');
             $table->string('month');
             $table->string('year');
+            $table->tinyInteger('approved')->default(0);
             $table->timestamps();
         });
     }

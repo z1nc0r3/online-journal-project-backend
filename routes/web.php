@@ -88,7 +88,7 @@ Route::group(['prefix' => 'api'], function () {
             Route::get('/all/approved/supervisor/{supervisor_id}', [MonthJournalRecordController::class, 'getAllTraineeRecordsForSupervisorApproved']);
 
             // Get pending and approved final journal records for evaluator
-            Route::get('/all/pending/evaluator/{evaluator_id}', [FinalJournalRecordsController::class, 'getPendingApprovalData']);
+            Route::get('/all/pending/evaluator/{evaluator_id}', [FinalJournalRecordsController::class, 'getPendingApprovalRecords']);
             Route::get('/all/approved/evaluator/{evaluator_id}', [FinalJournalRecordsController::class, 'getApprovedData']);
         });
     });
@@ -108,6 +108,9 @@ Route::group(['prefix' => 'api'], function () {
         Route::group(['prefix' => '/review/'], function () {
             Route::post('/add/supervisor', [MonthJournalRecordController::class, 'addSupervisorReview']);
             Route::post('/update/supervisor', [MonthJournalRecordController::class, 'updateSupervisorReview']);
+
+            Route::post('/add/evaluator', [FinalJournalRecordsController::class, 'addEvaluatorReview']);
+            Route::post('/update/evaluator', [FinalJournalRecordsController::class, 'updateEvaluatorReview']);
         });
     });
 });

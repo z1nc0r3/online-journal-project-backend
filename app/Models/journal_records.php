@@ -18,6 +18,7 @@ class journal_records extends Model
         'week',
         'month',
         'year',
+        'approved'
     ];
 
     public function trainee()
