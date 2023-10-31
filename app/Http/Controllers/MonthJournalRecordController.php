@@ -35,7 +35,10 @@ class MonthJournalRecordController extends Controller
                 return $traineeRecords->values();
             });
 
-        $mergedData = $groupedData; // Start with a copy of A
+        /* error_log($groupedData);
+        error_log($groupedReports); */
+
+        $mergedData = [];
 
         foreach ($groupedReports as $trainee_id => $entries) {
             foreach ($entries as $entry) {
