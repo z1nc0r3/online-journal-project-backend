@@ -28,6 +28,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('final_journal_records');
     }
-
-    
 };
