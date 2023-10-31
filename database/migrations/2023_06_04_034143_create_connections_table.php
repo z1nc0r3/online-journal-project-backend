@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('connections', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('trainee_id');
-            $table->unsignedBigInteger('supervisor_id');
-            $table->string('supervisor_name');
-            $table->unsignedBigInteger('evaluator_id');
-            $table->string('evaluator_name');
+            $table->int('trainee_id', 10);
+            $table->int('supervisor_id', 10);
+            $table->string('supervisor_name', 40);
+            $table->int('evaluator_id', 10);
+            $table->string('evaluator_name', 40);
             $table->timestamps();
 
             $table->foreign('trainee_id')->references('id')->on('users')->onDelete('cascade');
