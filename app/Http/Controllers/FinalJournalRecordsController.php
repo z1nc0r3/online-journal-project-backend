@@ -52,11 +52,14 @@ class FinalJournalRecordsController extends Controller
     {
         $traineeIdsWithSameDuration[] = $this->getCompletedTraineeList($evaluator_id);
 
+        // error_log(implode(",", $traineeIdsWithSameDuration));
+
         // get all records for above trainees
         $records = journal_records::select('trainee_id', 'description', 'solutions', 'week', 'month', 'year')
-            ->whereIn('trainee_id', $traineeIdsWithSameDuration)
+            ->whereIn('trainee_id', $traineeIdsWithSameDuration[0])
             ->where('approved', 1)
             ->get();
+
 
         $groupedData = $records->groupBy('trainee_id')
             ->map(function ($traineeRecords) {
@@ -67,7 +70,7 @@ class FinalJournalRecordsController extends Controller
             });
 
         $reports = MonthJournalRecord::select('id', 'trainee_id', 'records', 'number_of_leave', 'month', 'year')
-            ->whereIn('trainee_id', $traineeIdsWithSameDuration)
+            ->whereIn('trainee_id', $traineeIdsWithSameDuration[0])
             ->get();
 
         $groupedReports = $reports->groupBy('trainee_id')
