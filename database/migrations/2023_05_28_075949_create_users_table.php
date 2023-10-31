@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('department')->nullable();
             $table->string('address', 50)->nullable();
             $table->string('email', 30);
-            $table->integer('phone', 10)->nullable();
+            $table->varchar('phone', 10)->nullable();
             $table->string('estName')->nullable();
             $table->string('estAddress', 50)->nullable();
             $table->date('startDate')->nullable();

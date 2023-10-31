@@ -355,7 +355,7 @@ class UserController extends Controller
             'fName' => 'required',
             'department' => 'required',
             'email' => 'required|email',
-            'phone' => 'required',
+            'phone' => 'required'
         ]);
 
         $user->update([
@@ -371,9 +371,6 @@ class UserController extends Controller
     // Assign a supervisor and evaluator to a trainee
     public function assignSupervisorAndEvaluator(Request $request)
     {
-
-        error_log($request->input('trainee_connection.supervisor_id'));
-
         $traineeId = $request->id;
         $traineeName = $request->fName;
         $supervisorId = $request->input('trainee_connection.supervisor_id');
@@ -383,7 +380,6 @@ class UserController extends Controller
 
         // delete the connection if both supervisor and evaluator are not assigned
         if (!$supervisorId && !$evaluatorId) {
-            error_log('Deleting connection');
             Connection::where('trainee_id', $traineeId)
                 ->delete();
             return response()->json(['message' => 'Connection deleted successfully']);
@@ -395,7 +391,6 @@ class UserController extends Controller
             ->first();
 
         if (!$user) {
-            error_log('User not found. Creating new connection');
             Connection::create([
                 'trainee_id' => $traineeId,
                 'trainee_name' => $traineeName,
@@ -405,7 +400,6 @@ class UserController extends Controller
                 'evaluator_name' => $evaluatorName,
             ]);
         } else {
-            error_log('User found. Updating connection');
             $user->update([
                 'supervisor_id' => $supervisorId,
                 'supervisor_name' => $supervisorName,
