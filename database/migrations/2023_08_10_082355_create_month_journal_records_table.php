@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('month_journal_records', function (Blueprint $table) {
             $table->id();
-            $table->int('trainee_id', 10);
-            $table->int('supervisor_id', 10);
-            $table->int('evaluator_id', 10);
+            $table->unsignedBigInteger('trainee_id');
+            $table->unsignedBigInteger('supervisor_id');
+            $table->unsignedBigInteger('evaluator_id');
             $table->string('records', 1000);
-            $table->integer('number_of_leave', 2);
+            $table->unsignedInteger('number_of_leave');
             $table->string('month', 2);
             $table->string('year', 4);
             $table->tinyInteger('approved')->default(0);
