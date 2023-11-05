@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('connections', function (Blueprint $table) {
             $table->id();
-            $table->int('trainee_id', 10);
-            $table->int('supervisor_id', 10);
+            $table->unsignedBigInteger('trainee_id');
+            $table->unsignedBigInteger('supervisor_id');
             $table->string('supervisor_name', 40);
-            $table->int('evaluator_id', 10);
+            $table->unsignedBigInteger('evaluator_id');
             $table->string('evaluator_name', 40);
             $table->timestamps();
 

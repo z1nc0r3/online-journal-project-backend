@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('final_journal_records', function (Blueprint $table) {
             $table->id();
-            $table->int('trainee_id', 10);
-            $table->int('supervisor_id', 10);
-            $table->int('evaluator_id', 10);
+            $table->unsignedBigInteger('trainee_id');
+            $table->unsignedBigInteger('supervisor_id');
+            $table->unsignedBigInteger('evaluator_id');
             $table->string('record', 1000);
             $table->timestamps();
         });

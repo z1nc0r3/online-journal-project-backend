@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('journal_records', function (Blueprint $table) {
             $table->id();
-            $table->int('trainee_id', 10);
-            $table->int('supervisor_id', 10);
-            $table->int('evaluator_id', 10);
+            $table->unsignedBigInteger('trainee_id');
+            $table->unsignedBigInteger('supervisor_id');
+            $table->unsignedBigInteger('evaluator_id');
             $table->string('description', 1000);
             $table->string('solutions', 1000);
             $table->string('week', 1);
@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('year', 4);
             $table->tinyInteger('approved')->default(0);
             $table->timestamps();
+
             $table->foreign('trainee_id')->references('id')->on('users')->onDelete('cascade');
         });
     }

@@ -95,15 +95,13 @@ Route::group(['prefix' => 'api'], function () {
 
     // Set routes
     Route::group(['prefix' => '/set/'], function () {
-        Route::group(['prefix' => '/record/'], function () {
-            Route::post('/trainee/week', [JournalRecordsController::class, 'createRecord']);
-        });
+        Route::post('/record/trainee/week', [JournalRecordsController::class, 'createRecord']);
 
         // Set approval
         Route::group(['prefix' => '/approve/'], function () {
             Route::post('/{evaluator_id}', [FinalJournalRecordsController::class, 'setApproval']);
         });
-        
+
         // Handle reviews
         Route::group(['prefix' => '/review/'], function () {
             Route::post('/add/supervisor', [MonthJournalRecordController::class, 'addSupervisorReview']);

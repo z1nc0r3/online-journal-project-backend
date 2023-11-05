@@ -52,8 +52,6 @@ class FinalJournalRecordsController extends Controller
     {
         $traineeIdsWithSameDuration[] = $this->getCompletedTraineeList($evaluator_id);
 
-        // error_log(implode(",", $traineeIdsWithSameDuration));
-
         // get all records for above trainees
         $records = journal_records::select('trainee_id', 'description', 'solutions', 'week', 'month', 'year')
             ->whereIn('trainee_id', $traineeIdsWithSameDuration[0])
@@ -78,7 +76,7 @@ class FinalJournalRecordsController extends Controller
                 return $traineeRecords->values();
             });
 
-        $mergedData = $groupedData;
+        $mergedData = [];
 
         foreach ($groupedReports as $trainee_id => $entries) {
             foreach ($entries as $entry) {
