@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\MonthJournalRecord;
 use App\Models\journal_records;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class MonthJournalRecordController extends Controller
 {
@@ -37,15 +36,19 @@ class MonthJournalRecordController extends Controller
 
         $mergedData = [];
 
-        foreach ($groupedReports as $trainee_id => $entries) {
-            foreach ($entries as $entry) {
-                $mergedData[$trainee_id][$entry["month"]] = [
-                    "id" => $entry["id"],
-                    "reports" => $entry["records"],
-                    "number_of_leave" => $entry["number_of_leave"],
-                    "records" => $groupedData[$trainee_id][$entry["month"]]
-                ];
+        try {
+            foreach ($groupedReports as $trainee_id => $entries) {
+                foreach ($entries as $entry) {
+                    $mergedData[$trainee_id][$entry["month"]] = [
+                        "id" => $entry["id"],
+                        "reports" => $entry["records"],
+                        "number_of_leave" => $entry["number_of_leave"],
+                        "records" => $groupedData[$trainee_id][$entry["month"]]
+                    ];
+                }
             }
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
         }
 
         return response()->json(['records' => $mergedData]);
