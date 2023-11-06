@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('connections', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('trainee_id');
+            $table->string('trainee_name', 40);
             $table->unsignedBigInteger('supervisor_id');
             $table->string('supervisor_name', 40);
             $table->unsignedBigInteger('evaluator_id');
