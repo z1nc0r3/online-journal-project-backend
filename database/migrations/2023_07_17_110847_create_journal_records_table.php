@@ -16,8 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('trainee_id');
             $table->unsignedBigInteger('supervisor_id');
             $table->unsignedBigInteger('evaluator_id');
-            $table->string('description', 1000);
-            $table->string('solutions', 1000);
+            $table->string('description', 2500);
+            $table->string('solutions', 2500);
             $table->string('week', 1);
             $table->string('month', 2);
             $table->string('year', 4);
